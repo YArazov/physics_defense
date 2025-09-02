@@ -16,11 +16,41 @@ const BALL_COUNT = 10;
 const BALL_RADIUS = 30;
 const BALL_SPEED = 2;
 
+// Nice color palette for balls
+const BALL_COLORS = [
+    '#4F8A8B', // teal
+    '#FBD46D', // yellow
+    '#F76A6A', // coral
+    '#A1C6EA', // light blue
+    '#374785', // deep blue
+    '#24305E', // navy
+    '#70A1D7', // sky blue
+    '#FFB085', // peach
+    '#FF7E67', // orange
+    '#6DD47E'  // green
+];
+
 for (let i = 0; i < BALL_COUNT; i++) {
     const x = Math.random() * (canvas.width - BALL_RADIUS * 2) + BALL_RADIUS;
     const y = Math.random() * (canvas.height / 3);
-    balls.push(new Circle(x, y, BALL_RADIUS));
+    const color = BALL_COLORS[Math.floor(Math.random() * BALL_COLORS.length)];
+    balls.push(new Circle(x, y, BALL_RADIUS, color));
 }
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    // Do NOT reposition existing balls on resize
+}
+
+// Remove centerBalls and its call
+
+window.addEventListener('resize', () => {
+    resizeCanvas();
+});
+
+// Initial canvas setup
+resizeCanvas();
 
 function drawBalls() {
     for (const ball of balls) {
@@ -56,3 +86,15 @@ function animate() {
 }
 
 animate();
+
+function spawnBall() {
+    const x = Math.random() * (canvas.width - BALL_RADIUS * 2) + BALL_RADIUS;
+    const y = Math.random() * (canvas.height / 3);
+    const color = BALL_COLORS[Math.floor(Math.random() * BALL_COLORS.length)];
+    balls.push(new Circle(x, y, BALL_RADIUS, color));
+}
+
+// Example: spawn a new ball every 2 seconds (optional)
+setInterval(() => {
+    spawnBall();
+}, 2000);
