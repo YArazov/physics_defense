@@ -4,10 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Canvas App</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            position: relative;
+        }
+        #drawingCanvas {
+            display: block;
+        }
+        .center-btn {
+            position: absolute;
+            left: 50%;
+            top: 60%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+        }
+        .center-btn button {
+            padding: 16px 32px;
+            font-size: 1.2rem;
+            background: #4F8A8B;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .center-btn button:hover {
+            background: #374785;
+        }
+    </style>
 </head>
 <body>
     <canvas id="drawingCanvas" width="800" height="600"></canvas>
+    <div class="center-btn">
+        <a href="test-engine.html"><button>Test Engine</button></a>
+    </div>
     <script type="module" src="main.js"></script>
-    <a href="blankcircle.html"><button></button></a>
 </body>
 </html>

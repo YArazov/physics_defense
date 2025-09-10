@@ -10,11 +10,14 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-// Create balls (circles) with random positions
+// Detect which page we're on
+const isMenu = window.location.pathname.endsWith('index.html') || window.location.pathname === '/';
+
+// Ball settings
 const balls = [];
-const BALL_COUNT = 10;
+const BALL_COUNT = isMenu ? 10 : 20;
 const BALL_RADIUS = 30;
-const BALL_SPEED = 2;
+const BALL_SPEED = isMenu ? 2 : 5;
 
 // Nice color palette for balls
 const BALL_COLORS = [
@@ -30,6 +33,7 @@ const BALL_COLORS = [
     '#6DD47E'  // green
 ];
 
+// Create balls with random positions
 for (let i = 0; i < BALL_COUNT; i++) {
     const x = Math.random() * (canvas.width - BALL_RADIUS * 2) + BALL_RADIUS;
     const y = Math.random() * (canvas.height / 3);
@@ -42,8 +46,6 @@ function resizeCanvas() {
     canvas.height = window.innerHeight;
     // Do NOT reposition existing balls on resize
 }
-
-// Remove centerBalls and its call
 
 window.addEventListener('resize', () => {
     resizeCanvas();
@@ -59,10 +61,11 @@ function drawBalls() {
 }
 
 function updateBalls() {
-    for (const ball of balls) {
-        ball.y += BALL_SPEED;
-        if (ball.y - ball.radius > canvas.height) {
-            ball.y = -ball.radius; // Reset to top if it falls below canvas
+    // Remove balls that fall below the canvas
+    for (let i = balls.length - 1; i >= 0; i--) {
+        balls[i].y += BALL_SPEED;
+        if (balls[i].y - balls[i].radius > canvas.height) {
+            balls.splice(i, 1); // Remove ball from array
         }
     }
 }
@@ -74,7 +77,7 @@ function drawWelcomeText() {
     ctx.fillText('Welcome to Physics Defense!', canvas.width / 2, canvas.height / 2);
 }
 
-function animate() {
+function animateMenu() {
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -82,11 +85,32 @@ function animate() {
     drawBalls();
     drawWelcomeText();
 
-    requestAnimationFrame(animate);
+    requestAnimationFrame(animateMenu);
 }
 
-animate();
+function animateTestEngine() {
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    // No balls drawn or updated
+
+    // Optionally, add test info text
+    ctx.fillStyle = 'black';
+    ctx.font = '32px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('Physics Engine Test Animation', canvas.width / 2, 50);
+
+    requestAnimationFrame(animateTestEngine);
+}
+
+// Start appropriate animation
+if (isMenu) {
+    animateMenu();
+} else {
+    animateTestEngine();
+}
+
+// Ball spawning logic only for test-engine page
 function spawnBall() {
     const x = Math.random() * (canvas.width - BALL_RADIUS * 2) + BALL_RADIUS;
     const y = Math.random() * (canvas.height / 3);
@@ -97,4 +121,4 @@ function spawnBall() {
 // Example: spawn a new ball every 2 seconds (optional)
 setInterval(() => {
     spawnBall();
-}, 2000);
+}, 100);
