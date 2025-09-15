@@ -1,6 +1,7 @@
 // main.js
 
 import { Circle } from './game/shapes/circle.js';
+import Vector2 from './game/vector2.js';
 
 // Initialize the canvas and set up drawing functionalities
 const canvas = document.getElementById('drawingCanvas');
@@ -38,7 +39,9 @@ for (let i = 0; i < BALL_COUNT; i++) {
     const x = Math.random() * (canvas.width - BALL_RADIUS * 2) + BALL_RADIUS;
     const y = Math.random() * (canvas.height / 3);
     const color = BALL_COLORS[Math.floor(Math.random() * BALL_COLORS.length)];
-    balls.push(new Circle(x, y, BALL_RADIUS, color));
+    // Give initial downward velocity for menu
+    const velocity = isMenu ? new Vector2(0, BALL_SPEED) : new Vector2(0, BALL_SPEED);
+    balls.push(new Circle(x, y, BALL_RADIUS, color, velocity));
 }
 
 function resizeCanvas() {
@@ -63,8 +66,8 @@ function drawBalls() {
 function updateBalls() {
     // Remove balls that fall below the canvas
     for (let i = balls.length - 1; i >= 0; i--) {
-        balls[i].y += BALL_SPEED;
-        if (balls[i].y - balls[i].radius > canvas.height) {
+        balls[i].update();
+        if (balls[i].position.y - balls[i].radius > canvas.height) {
             balls.splice(i, 1); // Remove ball from array
         }
     }
@@ -115,7 +118,8 @@ function spawnBall() {
     const x = Math.random() * (canvas.width - BALL_RADIUS * 2) + BALL_RADIUS;
     const y = Math.random() * (canvas.height / 3);
     const color = BALL_COLORS[Math.floor(Math.random() * BALL_COLORS.length)];
-    balls.push(new Circle(x, y, BALL_RADIUS, color));
+    const velocity = new Vector2(0, BALL_SPEED);
+    balls.push(new Circle(x, y, BALL_RADIUS, color, velocity));
 }
 
 // Example: spawn a new ball every 2 seconds (optional)
