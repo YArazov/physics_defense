@@ -1,7 +1,7 @@
 // main.js
 
-import { Circle } from './game/shapes/circle.js';
 import Vector2 from './game/vector2.js';
+import { Circle } from './game/shapes/circle.js';
 
 // Initialize the canvas and set up drawing functionalities
 const canvas = document.getElementById('drawingCanvas');
@@ -34,15 +34,32 @@ const BALL_COLORS = [
     '#6DD47E'  // green
 ];
 
-// Create balls with random positions
-for (let i = 0; i < BALL_COUNT; i++) {
-    const x = Math.random() * (canvas.width - BALL_RADIUS * 2) + BALL_RADIUS;
-    const y = Math.random() * (canvas.height / 3);
-    const color = BALL_COLORS[Math.floor(Math.random() * BALL_COLORS.length)];
-    // Give initial downward velocity for menu
-    const velocity = isMenu ? new Vector2(0, BALL_SPEED) : new Vector2(0, BALL_SPEED);
-    balls.push(new Circle(x, y, BALL_RADIUS, color, velocity));
+// Only create balls for the menu page
+if (isMenu) {
+    for (let i = 0; i < BALL_COUNT; i++) {
+        const x = Math.random() * (canvas.width - BALL_RADIUS * 2) + BALL_RADIUS;
+        const y = Math.random() * (canvas.height / 3);
+        const color = BALL_COLORS[Math.floor(Math.random() * BALL_COLORS.length)];
+        const velocity = new Vector2(0, BALL_SPEED);
+        balls.push(new Circle(x, y, BALL_RADIUS, color, velocity));
+    }
 }
+
+let mousePosition = new Vector2();
+
+canvas.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    mousePosition.x = e.clientX - rect.left;
+    mousePosition.y = e.clientY - rect.top;
+});
+
+canvas.addEventListener('mousedown', (e) => {
+    if (e.button === 0) { // Left mouse button
+        const color = BALL_COLORS[Math.floor(Math.random() * BALL_COLORS.length)];
+        balls.push(new Circle(mousePosition.x, mousePosition.y, BALL_RADIUS, color, new Vector2(0, BALL_SPEED)));
+        console.log('Ball added at:', mousePosition.x, mousePosition.y, 'Total balls:', balls.length);
+    }
+});
 
 function resizeCanvas() {
     canvas.width = window.innerWidth;
@@ -95,7 +112,8 @@ function animateTestEngine() {
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // No balls drawn or updated
+    updateBalls();
+    drawBalls();
 
     // Optionally, add test info text
     ctx.fillStyle = 'black';
@@ -123,6 +141,18 @@ function spawnBall() {
 }
 
 // Example: spawn a new ball every 2 seconds (optional)
-setInterval(() => {
-    spawnBall();
-}, 100);
+if (isMenu) {
+    setInterval(() => {
+        spawnBall();
+    }, 100);
+}
+
+// Listen for navigation to test-engine.html from the menu
+if (isMenu) {
+    const testEngineButton = document.querySelector('.center-btn button');
+    if (testEngineButton) {
+        testEngineButton.addEventListener('click', () => {
+            balls.length = 0; // Clear all balls from the menu
+        });
+    }
+}
