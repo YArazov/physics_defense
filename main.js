@@ -168,11 +168,11 @@ function animateTestEngine() {
                 canvas.width / 2,
                 90
             );
-            // Optionally, also log to console:
-            console.log(
-                `Closest ball at (${ball.position.x.toFixed(1)}, ${ball.position.y.toFixed(1)}), ` +
-                `distance: ${distance.toFixed(1)}, inside: ${inside}`
-            );
+            // Move the ball to the mouse position if inside
+            if (inside) {
+                ball.position.x = mouse.position.x;
+                ball.position.y = mouse.position.y;
+            }
         } else {
             ctx.font = '20px Arial';
             ctx.fillStyle = 'gray';
