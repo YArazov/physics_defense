@@ -47,19 +47,54 @@ if (isMenu) {
 
 let mousePosition = new Vector2();
 
+// Mouse object to store position, velocity, and button states
+let mouse = {
+    position: new Vector2(),
+    lastPosition: new Vector2(),
+    velocity: new Vector2(),
+    leftDown: false,
+    rightDown: false
+};
+
 canvas.addEventListener('mousemove', (e) => {
     const rect = canvas.getBoundingClientRect();
-    mousePosition.x = e.clientX - rect.left;
-    mousePosition.y = e.clientY - rect.top;
+    mouse.lastPosition.x = mouse.position.x;
+    mouse.lastPosition.y = mouse.position.y;
+    mouse.position.x = e.clientX - rect.left;
+    mouse.position.y = e.clientY - rect.top;
+    mouse.velocity = mouse.position.subtract(mouse.lastPosition);
 });
 
 canvas.addEventListener('mousedown', (e) => {
+    if (e.button === 0) mouse.leftDown = true;
+    if (e.button === 2) mouse.rightDown = true;
+
     if (e.button === 0) { // Left mouse button
         const color = BALL_COLORS[Math.floor(Math.random() * BALL_COLORS.length)];
-        balls.push(new Circle(mousePosition.x, mousePosition.y, BALL_RADIUS, color, new Vector2(0, BALL_SPEED)));
-        console.log('Ball added at:', mousePosition.x, mousePosition.y, 'Total balls:', balls.length);
+        balls.push(new Circle(mouse.position.x, mouse.position.y, BALL_RADIUS, color, new Vector2(0, 0)));
+        console.log('Ball added at:', mouse.position.x, mouse.position.y, 'Total balls:', balls.length);
+    }
+
+    if (e.button === 2) { // Right mouse button
+        const { ball, distance, inside } = getClosestBallInfo(mouse.position);
+        if (ball) {
+            console.log(
+                `Closest ball at (${ball.position.x.toFixed(1)}, ${ball.position.y.toFixed(1)}), ` +
+                `distance: ${distance.toFixed(1)}, inside: ${inside}`
+            );
+        } else {
+            console.log('No balls to check.');
+        }
     }
 });
+
+canvas.addEventListener('mouseup', (e) => {
+    if (e.button === 0) mouse.leftDown = false;
+    if (e.button === 2) mouse.rightDown = false;
+});
+
+// Optional: prevent context menu on right click
+canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
 function resizeCanvas() {
     canvas.width = window.innerWidth;
@@ -121,6 +156,30 @@ function animateTestEngine() {
     ctx.textAlign = 'center';
     ctx.fillText('Physics Engine Test Animation', canvas.width / 2, 50);
 
+    // Check closest ball info while right mouse button is held
+    if (mouse.rightDown) {
+        const { ball, distance, inside } = getClosestBallInfo(mouse.position);
+        if (ball) {
+            ctx.font = '20px Arial';
+            ctx.fillStyle = inside ? 'green' : 'red';
+            ctx.fillText(
+                `Closest ball: (${ball.position.x.toFixed(1)}, ${ball.position.y.toFixed(1)}), ` +
+                `distance: ${distance.toFixed(1)}, inside: ${inside}`,
+                canvas.width / 2,
+                90
+            );
+            // Move the ball to the mouse position if inside
+            if (inside) {
+                ball.position.x = mouse.position.x;
+                ball.position.y = mouse.position.y;
+            }
+        } else {
+            ctx.font = '20px Arial';
+            ctx.fillStyle = 'gray';
+            ctx.fillText('No balls to check.', canvas.width / 2, 90);
+        }
+    }
+
     requestAnimationFrame(animateTestEngine);
 }
 
@@ -138,6 +197,27 @@ function spawnBall() {
     const color = BALL_COLORS[Math.floor(Math.random() * BALL_COLORS.length)];
     const velocity = new Vector2(0, BALL_SPEED);
     balls.push(new Circle(x, y, BALL_RADIUS, color, velocity));
+}
+
+/**
+ * Finds the closest ball to the given position and checks if the position is inside it.
+ * @param {Vector2} position - The position to check from.
+ * @returns {{ball: Circle|null, distance: number, inside: boolean}}
+ */
+function getClosestBallInfo(position) {
+    let closestBall = null;
+    let minDist = Infinity;
+    for (const ball of balls) {
+        const dx = position.x - ball.position.x;
+        const dy = position.y - ball.position.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < minDist) {
+            minDist = dist;
+            closestBall = ball;
+        }
+    }
+    const inside = closestBall ? minDist <= closestBall.radius : false;
+    return { ball: closestBall, distance: minDist, inside };
 }
 
 // Example: spawn a new ball every 2 seconds (optional)
