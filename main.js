@@ -47,19 +47,65 @@ if (isMenu) {
 
 let mousePosition = new Vector2();
 
+// Mouse object to store position, velocity, and button states
+let mouse = {
+    position: new Vector2(),
+    lastPosition: new Vector2(),
+    velocity: new Vector2(),
+    leftDown: false,
+    rightDown: false
+};
+
 canvas.addEventListener('mousemove', (e) => {
     const rect = canvas.getBoundingClientRect();
-    mousePosition.x = e.clientX - rect.left;
-    mousePosition.y = e.clientY - rect.top;
+    mouse.lastPosition.x = mouse.position.x;
+    mouse.lastPosition.y = mouse.position.y;
+    mouse.position.x = e.clientX - rect.left;
+    mouse.position.y = e.clientY - rect.top;
+    mouse.velocity = mouse.position.subtract(mouse.lastPosition);
 });
 
 canvas.addEventListener('mousedown', (e) => {
+    if (e.button === 0) mouse.leftDown = true;
+    if (e.button === 2) mouse.rightDown = true;
+
     if (e.button === 0) { // Left mouse button
         const color = BALL_COLORS[Math.floor(Math.random() * BALL_COLORS.length)];
-        balls.push(new Circle(mousePosition.x, mousePosition.y, BALL_RADIUS, color, new Vector2(0, BALL_SPEED)));
-        console.log('Ball added at:', mousePosition.x, mousePosition.y, 'Total balls:', balls.length);
+        balls.push(new Circle(mouse.position.x, mouse.position.y, BALL_RADIUS, color, new Vector2(0, 0)));
+        console.log('Ball added at:', mouse.position.x, mouse.position.y, 'Total balls:', balls.length);
+    }
+
+    if (e.button === 2) { // Right mouse button
+        let closestBall = null;
+        let minDist = Infinity;
+        for (const ball of balls) {
+            const dx = mouse.position.x - ball.position.x;
+            const dy = mouse.position.y - ball.position.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < minDist) {
+                minDist = dist;
+                closestBall = ball;
+            }
+        }
+        if (closestBall) {
+            const inside = minDist <= closestBall.radius;
+            console.log(
+                `Closest ball at (${closestBall.position.x.toFixed(1)}, ${closestBall.position.y.toFixed(1)}), ` +
+                `distance: ${minDist.toFixed(1)}, inside: ${inside}`
+            );
+        } else {
+            console.log('No balls to check.');
+        }
     }
 });
+
+canvas.addEventListener('mouseup', (e) => {
+    if (e.button === 0) mouse.leftDown = false;
+    if (e.button === 2) mouse.rightDown = false;
+});
+
+// Optional: prevent context menu on right click
+canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
 function resizeCanvas() {
     canvas.width = window.innerWidth;
