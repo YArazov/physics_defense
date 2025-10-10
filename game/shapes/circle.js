@@ -1,19 +1,16 @@
 // circle.js
 // Circle shape logic
-import Vector2 from '../vector2.js';
 
 export class Circle {
-    constructor(x, y, radius, color = 'blue', velocity = new Vector2(0, 0), acceleration = new Vector2(0, 0)) {
-        this.position = new Vector2(x, y);
-        this.velocity = velocity;
-        this.acceleration = acceleration;
+    constructor(position, radius) {
+        this.position = position;
         this.radius = radius;
         this.color = color;
     }
 
-    update() {
-        this.velocity = this.velocity.add(this.acceleration);
-        this.position = this.position.add(this.velocity);
+    update(dt) {
+        this.velocity = this.velocity.add(this.acceleration.clone().multiply(dt));
+        this.position = this.position.add(this.velocity.clone().multiply(dt));
     }
 
     draw(ctx) {

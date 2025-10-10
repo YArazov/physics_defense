@@ -71,6 +71,7 @@ Assets (images, sounds) are kept in an assets/ folder.
    - Separate or move some of the code from main.js into world.js, which code
    is related to keeping track of game objects or entities while main.js will be
    responsible for just the game loop logic 
+   - The world can have different kinds of objects which all have physical properties such as position, velocity etc, but may have different shapes. Separate the physical properties into a new class
 8. **Basic Game Mechanics**
    - Add simple enemy and projectile logic.
 9. **User Interaction**
