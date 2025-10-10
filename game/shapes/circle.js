@@ -5,7 +5,6 @@ export class Circle {
     constructor(position, radius) {
         this.position = position;
         this.radius = radius;
-        this.color = color;
     }
 
     update(dt) {
@@ -13,10 +12,10 @@ export class Circle {
         this.position = this.position.add(this.velocity.clone().multiply(dt));
     }
 
-    draw(ctx) {
+    draw(ctx, color) {
         ctx.beginPath();
         ctx.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
-        ctx.fillStyle = this.color;
+        ctx.fillStyle = color;
         ctx.fill();
     }
 }
