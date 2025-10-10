@@ -24,13 +24,7 @@ export class RigidBody {
             ctx.drawImage(this.image, this.position.x - this.radius, this.position.y - this.radius, this.radius * 2, this.radius * 2);
             return;
         } else {
-            if (this.shape instanceof Circle) {
-                ctx.beginPath();
-                ctx.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
-                ctx.fillStyle = this.color;
-                ctx.fill();
-            }
-            // Add rectangle drawing logic here if needed
+            this.shape.draw(ctx);
         }
     }
 }
