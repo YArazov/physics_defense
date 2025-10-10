@@ -4,6 +4,7 @@ import { RigidBody } from './rigidBody.js';
 import Vector2 from './vector2.js';
 import { Circle } from './shapes/circle.js';
 import { BALL_COLORS, BALL_RADIUS, BALL_SPEED } from '../settings.js';
+import { distance } from '../helperFunctions.js';
 
 export class GameWorld {
     constructor() {
@@ -38,5 +39,19 @@ export class GameWorld {
                 entity.draw(ctx);
             }
         }
+    }
+    // Finds the closest ball to the given position and checks if the position is inside it
+    getClosestBallInfo(position) {
+        let closestBall = null;
+        let minDist = Infinity;
+        for (const ball of this.entities) {
+            const dist = distance(position, ball.shape.position);
+            if (dist < minDist) {
+                minDist = dist;
+                closestBall = ball;
+            }
+        }
+        const inside = closestBall ? minDist <= closestBall.radius : false;
+        return { ball: closestBall, distance: minDist, inside };
     }
 }

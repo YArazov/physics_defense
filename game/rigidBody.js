@@ -6,7 +6,6 @@ import Vector2 from '../vector2.js';
 export class RigidBody {
     constructor(shape, image, color=null, velocity = new Vector2(0, 0), acceleration = new Vector2(0, 0)) {
         this.shape = shape;
-        this.position = new Vector2(x, y);
         this.velocity = velocity;
         this.acceleration = acceleration;
         this.radius = radius;
@@ -16,7 +15,7 @@ export class RigidBody {
 
     update(dt) {
         this.velocity = this.velocity.add(this.acceleration.clone().multiply(dt));
-        this.position = this.position.add(this.velocity.clone().multiply(dt));
+        this.shape.position = this.shape.position.add(this.velocity.clone().multiply(dt));
     }
 
     draw(ctx) {
