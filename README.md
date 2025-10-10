@@ -68,6 +68,9 @@ Assets (images, sounds) are kept in an assets/ folder.
    - Integrate gravity and user-applied forces (e.g., fling).
 7. **Game World Management**
    - Track and update all entities in the game world.
+   - Separate or move some of the code from main.js into world.js, which code
+   is related to keeping track of game objects or entities while main.js will be
+   responsible for just the game loop logic 
 8. **Basic Game Mechanics**
    - Add simple enemy and projectile logic.
 9. **User Interaction**
