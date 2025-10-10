@@ -14,10 +14,7 @@ export const BALL_COLORS = [
 
 export const BALL_RADIUS = 20;
 export const BALL_SPEED = 5;    
-export const MAX_BALLS = 100;
-
-export const CANVAS_WIDTH = 800;
-export const CANVAS_HEIGHT = 600;   
+export const MAX_BALLS = 100;  
 
 export const FRAME_RATE = 60; // Target frame rate
 export const TIME_STEP = 1 / FRAME_RATE; // Fixed time step for physics updates

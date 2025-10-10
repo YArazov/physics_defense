@@ -3,7 +3,7 @@
 import Vector2 from './game/vector2.js';
 import { Circle } from './game/shapes/circle.js';
 import { RigidBody } from './game/rigidBody.js';
-import { BALL_COLORS, BALL_RADIUS, BALL_SPEED, MAX_BALLS } from './settings.js';
+import { BALL_COLORS, BALL_RADIUS, BALL_SPEED, MAX_BALLS, TIME_STEP } from './settings.js';
 import { GameWorld } from './game/world.js';
 
 
@@ -96,21 +96,6 @@ window.addEventListener('resize', () => {
 // Initial canvas setup
 resizeCanvas();
 
-function drawBalls() {
-    for (const ball of balls) {
-        ball.draw(ctx);
-    }
-}
-
-function updateBalls() {
-    // Remove balls that fall below the canvas
-    for (let i = balls.length - 1; i >= 0; i--) {
-        balls[i].update();
-        if (balls[i].position.y - balls[i].radius > canvas.height) {
-            balls.splice(i, 1); // Remove ball from array
-        }
-    }
-}
 
 function drawWelcomeText() {
     ctx.fillStyle = 'black';
@@ -123,7 +108,8 @@ function animateMenu() {
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    updateBalls();
+    world.update(TIME_STEP);
+    
     drawBalls();
     drawWelcomeText();
 

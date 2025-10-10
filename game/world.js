@@ -31,4 +31,12 @@ export class GameWorld {
             }
         }
     }
+
+    draw(ctx) {
+        for (const entity of this.entities) {
+            if (typeof entity.draw === 'function') {
+                entity.draw(ctx);
+            }
+        }
+    }
 }
