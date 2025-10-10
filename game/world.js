@@ -51,7 +51,7 @@ export class GameWorld {
                 closestBall = ball;
             }
         }
-        const inside = closestBall ? minDist <= closestBall.radius : false;
+        const inside = closestBall ? minDist <= closestBall.shape.radius : false;
         return { ball: closestBall, distance: minDist, inside };
     }
 }

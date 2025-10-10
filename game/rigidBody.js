@@ -1,14 +1,13 @@
 // a rigid body class has physical properties like position, velocity, acceleration, mass, and shape
 // its shape can be a circle or rectangle
 
-import Vector2 from '../vector2.js';
+import Vector2 from './vector2.js';
 
 export class RigidBody {
     constructor(shape, image, color=null, velocity = new Vector2(0, 0), acceleration = new Vector2(0, 0)) {
         this.shape = shape;
         this.velocity = velocity;
         this.acceleration = acceleration;
-        this.radius = radius;
         this.color = color;
         this.image = image;
     }

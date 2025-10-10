@@ -58,8 +58,7 @@ canvas.addEventListener('mousedown', (e) => {
 
     if (e.button === 0) { // Left mouse button
         const color = BALL_COLORS[Math.floor(Math.random() * BALL_COLORS.length)];
-        balls.push(new Circle(mouse.position.x, mouse.position.y, BALL_RADIUS, color, new Vector2(0, 0)));
-        console.log('Ball added at:', mouse.position.x, mouse.position.y, 'Total balls:', balls.length);
+        world.createRigidBody(new Circle(new Vector2(mouse.position.x, mouse.position.y), BALL_RADIUS), null, color, new Vector2(0, 0));
     }
 });
 
