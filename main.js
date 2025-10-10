@@ -15,6 +15,9 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+// world instance
+const world = new GameWorld();
+
 // Detect which page we're on
 const isTesting = window.location.pathname.endsWith('test-engine.html');
 
@@ -174,14 +177,7 @@ if (!isTesting) {
     animateTestEngine();
 }
 
-// Ball spawning logic only for test-engine page
-function spawnBall() {
-    const x = Math.random() * (canvas.width - BALL_RADIUS * 2) + BALL_RADIUS;
-    const y = Math.random() * (canvas.height / 3);
-    const color = BALL_COLORS[Math.floor(Math.random() * BALL_COLORS.length)];
-    const velocity = new Vector2(0, BALL_SPEED);
-    balls.push(new Circle(x, y, BALL_RADIUS, color, velocity));
-}
+
 
 /**
  * Finds the closest ball to the given position and checks if the position is inside it.
@@ -207,7 +203,9 @@ function getClosestBallInfo(position) {
 // Example: spawn a new ball every 2 seconds (optional)
 if (!isTesting) {
     setInterval(() => {
-        spawnBall();
+        world.spawnBall(canvas, null, 
+            BALL_COLORS[Math.floor(Math.random() * BALL_COLORS.length)], 
+            new Vector2(0, BALL_SPEED));
     }, 100);
 }
 
@@ -216,7 +214,7 @@ if (!isTesting) {
     const testEngineButton = document.querySelector('.center-btn button');
     if (testEngineButton) {
         testEngineButton.addEventListener('click', () => {
-            balls.length = 0; // Clear all balls from the menu
+            world.entities = []; // Clear existing entities
         });
     }
 }
