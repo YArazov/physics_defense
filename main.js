@@ -83,6 +83,8 @@ function animateTestEngine() {
             if (inside) {
                 ball.shape.position.x = inputState.mouse.position.x;
                 ball.shape.position.y = inputState.mouse.position.y;
+                //balls inherit the mouse velocity
+                ball.velocity = inputState.mouse.velocity.clone();  
             }
         } else {
             ctx.font = '20px Arial';
