@@ -22,7 +22,8 @@ export function initInputListeners() {
         inputState.mouse.lastPosition.y = inputState.mouse.position.y;
         inputState.mouse.position.x = e.clientX - rect.left;
         inputState.mouse.position.y = e.clientY - rect.top;
-        inputState.mouse.velocity = inputState.mouse.position.subtract(inputState.mouse.lastPosition);
+        //correctly calculate mouse velocity = change in position / change in time
+        inputState.mouse.velocity = inputState.mouse.position.clone().subtract(inputState.mouse.lastPosition).divide(TIME_STEP);
     });
 
     canvas.addEventListener('mousedown', (e) => {
