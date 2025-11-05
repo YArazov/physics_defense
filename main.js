@@ -68,29 +68,13 @@ function animateTestEngine() {
     ctx.fillText('Physics Engine Test Animation', canvas.width / 2, 50);
 
     // Check closest ball info while right mouse button is held
-    if (inputState.mouse.rightDown) {
-        const { ball, distance, inside } = world.getClosestBallInfo(inputState.mouse.position);
-        if (ball) {
-            ctx.font = '20px Arial';
-            ctx.fillStyle = inside ? 'green' : 'red';
-            ctx.fillText(
-                `Closest ball: (${ball.shape.position.x.toFixed(1)}, ${ball.shape.position.y.toFixed(1)}), ` +
-                `distance: ${distance.toFixed(1)}, inside: ${inside}`,
-                canvas.width / 2,
-                90
-            );
-            // Move the ball to the inputState.mouse position if inside
-            if (inside) {
-                ball.shape.position.x = inputState.mouse.position.x;
-                ball.shape.position.y = inputState.mouse.position.y;
-                //balls inherit the mouse velocity
-                ball.velocity = inputState.mouse.velocity.clone();  
-            }
-        } else {
-            ctx.font = '20px Arial';
-            ctx.fillStyle = 'gray';
-            ctx.fillText('No balls to check.', canvas.width / 2, 90);
-        }
+    if (inputState.mouse.rightDown && inputState.mouse.movedObject == null) {
+        findAndBindObjectToMouse();
+    }
+    if (inputState.mouse.rightDown  && inputState.mouse.movedObject != null) {
+        moveWithMouse();
+    } else {
+        inputState.mouse.movedObject = null;  
     }
 
     requestAnimationFrame(animateTestEngine);
@@ -121,4 +105,35 @@ if (!isTesting) {
             world.entities = []; // Clear existing entities
         });
     }
+}
+
+
+function findAndBindObjectToMouse() {
+    const { ball, distance, inside } = world.getClosestBallInfo(inputState.mouse.position);
+    if (ball) {
+        ctx.font = '20px Arial';
+        ctx.fillStyle = inside ? 'green' : 'red';
+        ctx.fillText(
+            `Closest ball: (${ball.shape.position.x.toFixed(1)}, ${ball.shape.position.y.toFixed(1)}), ` +
+            `distance: ${distance.toFixed(1)}, inside: ${inside}`,
+            canvas.width / 2,
+            90
+        );
+        // Move the ball to the inputState.mouse position if inside
+        if (inside) {
+            inputState.mouse.movedObject = ball;
+        }
+    } else {
+        ctx.font = '20px Arial';
+        ctx.fillStyle = 'gray';
+        ctx.fillText('No balls to check.', canvas.width / 2, 90);
+    }
+}
+
+function moveWithMouse() {
+    let ball = inputState.mouse.movedObject;
+    ball.shape.position.x = inputState.mouse.position.x;
+    ball.shape.position.y = inputState.mouse.position.y;
+    //balls inherit the mouse velocity
+    ball.velocity = inputState.mouse.velocity.clone();  
 }
