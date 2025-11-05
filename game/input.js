@@ -9,10 +9,14 @@ export const inputState = {
         lastPosition: new Vector2(),
         velocity: new Vector2(),
         leftDown: false,
-        rightDown: false
+        rightDown: false,
+        movedObject: null,
     },
     
 };
+
+let mouseMoveTimeoutId = null;
+const MOUSE_VELOCITY_TIMEOUT_MS = 10;
 
 // Attach listeners
 export function initInputListeners() {
@@ -24,6 +28,13 @@ export function initInputListeners() {
         inputState.mouse.position.y = e.clientY - rect.top;
         //correctly calculate mouse velocity = change in position / change in time
         inputState.mouse.velocity = inputState.mouse.position.clone().subtract(inputState.mouse.lastPosition).divide(TIME_STEP);
+
+        // reset the timeout so velocity will be zero if no move occurs for the timeout period
+        if (mouseMoveTimeoutId !== null) clearTimeout(mouseMoveTimeoutId);
+        mouseMoveTimeoutId = setTimeout(() => {
+            inputState.mouse.velocity = new Vector2(0, 0);
+            mouseMoveTimeoutId = null;
+        }, MOUSE_VELOCITY_TIMEOUT_MS);
     });
 
     canvas.addEventListener('mousedown', (e) => {
