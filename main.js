@@ -77,6 +77,28 @@ function animateTestEngine() {
         inputState.mouse.movedObject = null;  
     }
 
+    let g = 0;
+    console.log(inputState.gravitySelected);
+    switch (inputState.gravitySelected) {
+        case '3':
+            g = 19.62;
+            break;
+        case '2':
+            g = 9.81;
+            break;
+        case '1':
+            g = 4.905;
+            break;
+        case '0':
+            g = 0;
+            break;
+    }
+    console.log(g);
+    // for (const entity of world.entities) {
+    //     entity.acceleration.y = g;
+    // }
+
+
     requestAnimationFrame(animateTestEngine);
 }
 

@@ -12,6 +12,7 @@ export const inputState = {
         rightDown: false,
         movedObject: null,
     },
+    gravitySelected: '2', // default gravity level
     
 };
 
@@ -58,6 +59,11 @@ export function initInputListeners() {
         resizeCanvas();
     });
     resizeCanvas();
+
+    const selectGravity = document.getElementById("gravity");
+    selectGravity.addEventListener("change", function () {
+        inputState.gravitySelected = selectGravity.value;
+    });
 }
 
 function resizeCanvas() {
