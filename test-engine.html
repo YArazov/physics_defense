@@ -4,18 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Engine</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-        #drawingCanvas {
-            display: block;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <select id="gravity">
+        <option value="" disabled>Gravity strength</option>
+        <option value=0>Disabled gravity</option>
+        <option value=1>Weak gravity</option>
+        <option value=2 selected>Medium gravity</option>
+        <option value=3>Strong gravity</option>
+    </select>
     <canvas id="drawingCanvas" width="800" height="600"></canvas>
     <script type="module" src="main.js"></script>
 </body>
