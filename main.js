@@ -3,7 +3,7 @@
 import Vector2 from './game/vector2.js';
 import { Circle } from './game/shapes/circle.js';
 import { RigidBody } from './game/rigidBody.js';
-import { BALL_COLORS, BALL_RADIUS, BALL_SPEED, MAX_BALLS, TIME_STEP } from './settings.js';
+import { BALL_COLORS, BALL_RADIUS, BALL_SPEED, MAX_BALLS, TIME_STEP, GRAVITY } from './settings.js';
 import { GameWorld } from './game/world.js';
 import { inputState, initInputListeners } from './game/input.js';
 
@@ -77,26 +77,26 @@ function animateTestEngine() {
         inputState.mouse.movedObject = null;  
     }
 
-    let g = 0;
-    console.log(inputState.gravitySelected);
+    let g = GRAVITY.NORMAL;
+    
     switch (inputState.gravitySelected) {
         case '3':
-            g = 19.62;
+            g = GRAVITY.STRONG;
             break;
         case '2':
-            g = 9.81;
+            g = GRAVITY.NORMAL;
             break;
         case '1':
-            g = 4.905;
+            g = GRAVITY.WEAK;
             break;
         case '0':
-            g = 0;
+            g = GRAVITY.ZERO;
             break;
     }
-    console.log(g);
-    // for (const entity of world.entities) {
-    //     entity.acceleration.y = g;
-    // }
+  
+    for (const entity of world.entities) {
+        entity.acceleration.y = g;
+    }
 
 
     requestAnimationFrame(animateTestEngine);

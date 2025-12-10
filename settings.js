@@ -20,5 +20,10 @@ export const FRAME_RATE = 60; // Target frame rate
 export const TIME_STEP = 1 / FRAME_RATE; // Fixed time step for physics updates
 
 // Gravity constant for physics simulation
-export const GRAVITY_ACCELERATION = 200; // pixels per second squared
+export const GRAVITY = {
+    STRONG: 2000, // pixels per second squared
+    WEAK: 50,
+    NORMAL: 200,
+    ZERO: 0
+};
 
