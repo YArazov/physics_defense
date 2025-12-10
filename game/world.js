@@ -3,7 +3,7 @@
 import { RigidBody } from './rigidBody.js';
 import Vector2 from './vector2.js';
 import { Circle } from './shapes/circle.js';
-import { BALL_COLORS, BALL_RADIUS, BALL_SPEED, GRAVITY_ACCELERATION } from '../settings.js';
+import { BALL_COLORS, BALL_RADIUS, BALL_SPEED, GRAVITY } from '../settings.js';
 import { distance } from '../helperFunctions.js';
 
 export class GameWorld {
@@ -11,7 +11,7 @@ export class GameWorld {
         this.entities = [];
     }
 
-    createRigidBody(shape, image, color=null, velocity = new Vector2(0, 0), acceleration = new Vector2(0, GRAVITY_ACCELERATION)) {
+    createRigidBody(shape, image, color=null, velocity = new Vector2(0, 0), acceleration = new Vector2(0, 0)) {
         const body = new RigidBody(shape, image, color, velocity, acceleration);
         this.entities.push(body);
         return body;
