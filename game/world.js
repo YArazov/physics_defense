@@ -5,14 +5,17 @@ import Vector2 from './vector2.js';
 import { Circle } from './shapes/circle.js';
 import { BALL_COLORS, BALL_RADIUS, BALL_SPEED, GRAVITY } from '../settings.js';
 import { distance } from '../helperFunctions.js';
+import { CollisionResolver } from './collisions.js';
 
 export class GameWorld {
     constructor() {
         this.entities = [];
+        this.collisionResolver = new CollisionResolver();
     }
 
     createRigidBody(shape, image, color=null, velocity = new Vector2(0, 0), acceleration = new Vector2(0, 0)) {
         const body = new RigidBody(shape, image, color, velocity, acceleration);
+        body.setMass();
         this.entities.push(body);
         return body;
     }
@@ -31,6 +34,11 @@ export class GameWorld {
                 entity.update(dt);
             }
         }
+    }
+
+    resolveCollisions() {
+        // Collision detection and resolution logic would go here
+        this.collisionResolver.detectAndResolve(this.entities);
     }
 
     draw(ctx) {

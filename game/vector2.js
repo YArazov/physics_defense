@@ -6,19 +6,27 @@ class Vector2 {
     }
 
     add(v) {
-        return new Vector2(this.x + v.x, this.y + v.y);
+        this.x += v.x;
+        this.y += v.y;
+        return this;
     }
 
     subtract(v) {
-        return new Vector2(this.x - v.x, this.y - v.y);
+        this.x -= v.x;
+        this.y -= v.y;
+        return this;
     }
 
     multiply(scalar) {
-        return new Vector2(this.x * scalar, this.y * scalar);
+        this.x *= scalar;
+		this.y *= scalar;
+		return this;
     }
 
     divide(scalar) {
-        return new Vector2(this.x / scalar, this.y / scalar);
+        this.x /= scalar;
+		this.y /= scalar;
+		return this;
     }
 
     magnitude() {
@@ -26,13 +34,35 @@ class Vector2 {
     }
 
     normalize() {
-        const mag = this.magnitude();
-        return mag === 0 ? new Vector2(0, 0) : this.divide(mag);
+        const length = this.magnitude();
+		if(length > 0) {
+			this.x /= length;
+			this.y /= length;
+		}
+		return this;
     }
 
     clone() {
         return new Vector2(this.x, this.y);
     }
+
+    distanceTo (v) {
+		return this.clone().subtract(v).magnitude();
+	}
+
+    dot (v) {
+		return this.x * v.x + this.y * v.y;
+	}
+
+	cross (v) {
+		return (this.x * v.y) - (this.y * v.x);
+	}
+
+	checkNearlyZero () {
+		return this.magnitude() < 0.05;
+	}
+
+
 }
 
 export default Vector2;
