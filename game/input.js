@@ -44,7 +44,7 @@ export function initInputListeners() {
 
         if (e.button === 0) {
             const color = BALL_COLORS[Math.floor(Math.random() * BALL_COLORS.length)];
-            world.createRigidBody(new Circle(new Vector2(inputState.mouse.position.x, inputState.mouse.position.y), BALL_RADIUS), null, color, new Vector2(0, 0));
+            world.createRigidBody(new Circle(new Vector2(inputState.mouse.position.x, inputState.mouse.position.y), BALL_RADIUS*(0.3+2*Math.random())), null, color, new Vector2(0, 0));
         }
     });
 
