@@ -10,7 +10,27 @@ export class RigidBody {
         this.acceleration = acceleration;
         this.color = color;
         this.image = image;
+
+        this.mass;
+		this.inverseMass;
+		this.density = 5;
+		this.inertia;
+		this.inverseInertia;
+		this.isFixed = false;
     }
+
+    setMass() {
+		this.mass = this.shape.calculateMass(this.density);
+		this.inertia = this.shape.calculateInertia(this.mass);
+
+		if (this.isFixed) {
+			this.inverseMass = 0;
+			this.inverseInertia = 0;
+		} else {
+			this.inverseMass = 1 / this.mass;
+			this.inverseInertia = 1 / this.inertia;
+		}
+	}
 
     update(dt) {
         this.velocity = this.velocity.add(this.acceleration.clone().multiply(dt));

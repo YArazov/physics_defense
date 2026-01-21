@@ -59,6 +59,10 @@ function animateTestEngine() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     world.update(TIME_STEP);
+
+    //collisions detection/resolution would go here
+    world.resolveCollisions();
+
     world.draw(ctx);
 
     // Optionally, add test info text

@@ -7,6 +7,16 @@ export class Circle {
         this.radius = radius;
     }
 
+    calculateMass(density) {
+        const area = Math.PI * this.radius * this.radius;
+        return area * density;
+    }
+
+    calculateInertia(mass) {
+        let inertia = 0.5 * mass * this.radius * this.radius;  //1/2 M R ^2
+        return inertia;
+    }
+
     update(dt) {
         this.velocity = this.velocity.add(this.acceleration.clone().multiply(dt));
         this.position = this.position.add(this.velocity.clone().multiply(dt));
