@@ -78,3 +78,21 @@ Assets (images, sounds) are kept in an assets/ folder.
    - Allow user to launch projectiles (arrows, stones).
 10. **Tower Defense Features**
     - Implement enemy waves, castle health, and upgrades.
+
+
+Recommended "Phase 1" Roadmap for a Game-Ready Engine:
+Week 1-2: Shapes & Broadphase
+
+Implement AABB and Polygon (using SAT) classes.
+
+Implement a simple Spatial Hash/Grid for broadphase.
+
+Week 3: Friction & Materials
+
+Integrate friction and restitution into your collision resolution step.
+
+Create a way to assign materials.
+
+Week 4: Rotation
+
+Add angular velocity, inertia, and torque.
