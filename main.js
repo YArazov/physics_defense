@@ -102,6 +102,17 @@ function animateTestEngine() {
         entity.acceleration.y = g;
     }
 
+    const x = canvas.width / 2;
+    const y = canvas.height / 2;
+    const rectWidth = 100;
+    const rectHeight = 200;
+    const angle = Math.PI / 8; // 22.5 degrees in radians
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(-angle);   // Rotate by -22.5 degrees
+    ctx.fillStyle = 'black';
+    ctx.fillRect(-rectWidth / 2, -rectHeight / 2, rectWidth, rectHeight);
+    ctx.restore();
 
     requestAnimationFrame(animateTestEngine);
 }
