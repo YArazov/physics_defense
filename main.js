@@ -116,7 +116,7 @@ if (!isTesting) {
 // Example: spawn a new ball every 2 seconds (optional)
 if (!isTesting) {
     setInterval(() => {
-        world.spawnBall(canvas, null, 
+        world.spawnObject(canvas, null, 
             BALL_COLORS[Math.floor(Math.random() * BALL_COLORS.length)], 
             new Vector2(0, BALL_SPEED));
     }, 100);

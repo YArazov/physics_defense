@@ -1,9 +1,12 @@
+import Vector2 from '../vector2.js';
+
 export class Rectangle {
     constructor(position, width, height, orientation = Math.random()*2*Math.PI) {
         this.position = position;
         this.width = width;
         this.height = height;
         this.orientation = orientation; // Initial orientation in radians
+        this.vertices = [new Vector2(0,0),new Vector2(0,0),new Vector2(0,0),new Vector2(0,0)];
     }
 
     calculateMass(density) {
@@ -15,6 +18,13 @@ export class Rectangle {
         let inertia = 1/12 * mass * (this.width * this.width + this.height * this.height);  //I = (1/12) * M * (L² + W²)
         return inertia;
     }
+
+    updateVertices() {
+        this.vertices[0].setX(-this.width/2).setY(-this.height/2).rotate(this.orientation).add(this.position);
+        this.vertices[1].setX(this.width/2).setY(-this.height/2).rotate(this.orientation).add(this.position);
+        this.vertices[2].setX(this.width/2).setY(this.height/2).rotate(this.orientation).add(this.position);
+        this.vertices[3].setX(-this.width/2).setY(this.height/2).rotate(this.orientation).add(this.position);
+    } 
 
     update(dt) {
         this.velocity = this.velocity.add(this.acceleration.clone().multiply(dt));

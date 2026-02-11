@@ -1,4 +1,6 @@
 import { Circle } from './shapes/circle.js';
+import { Rectangle } from './shapes/rectangle.js';
+import { checkNearlyEqual, checkNearlyEqualVectors, averageVector } from '../helperFunctions.js';
 
 export class CollisionResolver {
     constructor() {
@@ -9,6 +11,7 @@ export class CollisionResolver {
     }
 
     clearCollisions() {
+        console.log(this.collisions.length);
         this.collisions = [];
     }
 
@@ -20,9 +23,21 @@ export class CollisionResolver {
                     objects[j].shape instanceof Circle) {
                     this.detectCollisionCircleCircle(objects[i], objects[j]);
                 }  
+                else if(objects[i].shape instanceof Rectangle && 
+                    objects[j].shape instanceof Rectangle) {
+                    this.detectCollisionPolygonPolygon(objects[i], objects[j]);
+                }
+                else if(objects[i].shape instanceof Circle && 
+                    objects[j].shape instanceof Rectangle) {
+                    this.detectCollisionCirclePolygon(objects[i], objects[j]);
+                }
+                else if(objects[i].shape instanceof Rectangle && 
+                    objects[j].shape instanceof Circle) {
+                    this.detectCollisionCirclePolygon(objects[j], objects[i]);
+                }
                 else {
                     //other shape combinations
-                    console.log("Other shape combinations not implemented yet.");
+                    console.log("other shape collision");
                 }
             }
         }
@@ -45,6 +60,300 @@ export class CollisionResolver {
             );
         }
     }
+
+    // Collision detection for Polygons
+    //
+    //
+
+
+    detectCollisionCirclePolygon (c, p) {
+        const vertices = p.shape.vertices;
+        const cShape = c.shape;
+        let axis, overlap, normal;
+
+        overlap = Number.MAX_VALUE;
+
+        for (let i=0; i<vertices.length; i++) {
+            const v1 = vertices[i]; //i = 0,1,2,3
+            const v2 = vertices[(i+1)%vertices.length]; //1,2,3,0
+
+            //test closest point segment
+            this.findClosestPointSegment(cShape.position, v1, v2);
+
+            axis = v2.clone().subtract(v1).rotateCCW90().normalize();
+            //we found the vector from v1 to v2, then rotated to point out of polygon, 
+            //then normalized to make length 1 (unit vector)
+            //find min and max projections on this axis
+            const [min1, max1] = this.projectVertices(vertices, axis);
+            const [min2, max2] = this.projectCircle(cShape.position, cShape.radius, axis);
+            if (min1 >= max2 || min2 >= max1) {
+                return; //we have separation, therefore no collision
+            }
+
+            const axisOverlap = Math.min(max2-min1, max1-min2); //find on which axis we have the smallest overlap
+            if (axisOverlap < overlap) {
+                overlap = axisOverlap;
+                normal = axis;
+            }
+        }
+        //also test for axis that is from the closest Vertex to the center of circle
+        const closestVertex = this.findClosestVertex(vertices, cShape.position);
+        axis = closestVertex.clone().subtract(cShape.position).normalize(); //axis from circle to closest vertex on polygon
+        
+        const [min1, max1] = this.projectVertices(vertices, axis);
+        const [min2, max2] = this.projectCircle(cShape.position, cShape.radius, axis);
+        if (min1 >= max2 || min2 >= max1) {
+            return;
+        }
+
+        const axisOverlap = Math.min(max2-min1, max1-min2); //find on which axis we have the smallest overlap
+        if (axisOverlap < overlap) {
+            overlap = axisOverlap;
+            normal = axis;
+        }
+
+        const vec1to2 = p.shape.position.clone().subtract(c.shape.position);  //gives correct direction for normal
+        if (normal.dot(vec1to2) < 0) { 
+            normal.invert();
+        }
+
+        const point = this.findContactPointCirclePolygon(cShape.position, vertices);
+
+        this.collisions.push(
+            new Collision([c, p], overlap, normal, point),
+        );
+    }
+
+    projectVertices (vertices, axis) {
+        let min, max;
+        min = vertices[0].dot(axis);
+        max = min;
+
+        for (let i=1; i<vertices.length; i++) {
+            const proj = vertices[i].dot(axis);//dot product gives us the projection
+            if (proj < min) {
+                min = proj;
+            }
+            if (proj > max) {
+                max = proj;
+            }
+        }
+
+        return [min, max];
+    }
+
+    projectCircle (center, radius, axis) {
+        let min,max;
+
+        const direction = axis.clone();
+        const points = [
+            center.clone().moveDistInDir(radius, direction),
+            center.clone().moveDistInDir(-radius, direction)
+        ];  //points are two points on circle along axis
+        min = points[0].dot(axis);  //projection of points on axis
+        max = points[1].dot(axis);
+        if(min > max) {
+            const t = min;
+            min = max;
+            max = t;    //swap min and max if they are opposite
+        }
+        return [min, max];
+    }
+
+    findClosestVertex (vertices, center) {  //returns the i of the closest of vertices to a center point
+        let minDist = Number.MAX_VALUE;
+        let vertexDist, closestVertex;
+        for (let i=0; i<vertices.length; i++) {
+            vertexDist = vertices[i].distanceTo(center);
+            if (vertexDist < minDist) {
+                minDist = vertexDist;
+                closestVertex = vertices[i];
+            }
+        }
+        return closestVertex;
+    }
+
+    //lesson 9, detect polygons collisions
+    detectCollisionPolygonPolygon (o1, o2) {
+        const vertices1 = o1.shape.vertices;
+        const vertices2 = o2.shape.vertices;
+        let smallestOverlap, collisionNormal, axis;
+        smallestOverlap = Number.MAX_VALUE;
+
+        const vector1to2 = o2.shape.position.clone().subtract(o1.shape.position);
+
+        const edges1 = this.calculateEdges(vertices1);
+        const axes1 = [];
+        for (let i = 0; i < edges1.length; i++) {
+            axes1.push(edges1[i].rotateCCW90().normalize());
+        }
+        //check if axes are not on the back side of rectangle
+        for (let i = 0; i < axes1.length; i++) {
+            const axis = axes1[i];
+            if(axis.dot(vector1to2) < 0) {
+                //axis is in the wrong direction, i.e it is on the backside of rectangle
+                continue;
+            }
+            //calculate overlap on axis
+            const { overlap, normal } = this.calculateOverlap(vertices1, vertices2, axis);
+            
+            if (overlap <= 0) {
+                return; // Separating axis found, no collision
+            } else if (overlap < smallestOverlap) {
+                smallestOverlap = overlap;
+                collisionNormal = normal;
+            }
+        }
+
+        //object2 edges
+        const vector2to1 = vector1to2.clone().invert();
+        const edges2 = this.calculateEdges(vertices2);
+        const axes2 = [];
+        for (let i = 0; i < edges2.length; i++) {
+            axes2.push(edges2[i].rotateCCW90().normalize());
+        }
+        for (let i = 0; i < axes2.length; i++) {
+            const axis = axes2[i];
+            if(axis.dot(vector2to1) < 0) {
+                continue;
+            }
+            const { overlap, normal } = this.calculateOverlap(vertices1, vertices2, axis);
+            if (overlap <= 0) {
+                return;
+            } else if (overlap < smallestOverlap) {
+                smallestOverlap = overlap;
+                collisionNormal = normal;
+            }
+        }
+        // console.log(o1, o2);
+        const normal = this.correctNormalDirection(collisionNormal, o1, o2);
+
+        const point = this.findContactPointPolygons(vertices1, vertices2);
+        // renderer.renderedNextFrame.push(point);
+
+        this.collisions.push(
+            new Collision([o1, o2], smallestOverlap, normal, point),
+        );
+    }
+
+    calculateEdges(vertices) {
+        const edges = [];
+        for (let i=0; i<vertices.length; i++) {
+            const v1 = vertices[i]; //i = 0,1,2,3
+            const v2 = vertices[(i+1)%vertices.length]; //1,2,3,0
+            edges.push(v2.clone().subtract(v1));
+        }
+        return edges;
+    }
+
+    calculateOverlap(vertices1, vertices2, axis) {
+        const [min1, max1] = this.projectVertices(vertices1, axis);
+        const [min2, max2] = this.projectVertices(vertices2, axis);
+
+        if (min1 >= max2 || min2 >= max1) {
+            return {
+                overlap: 0,
+                normal: null
+            }
+        }
+        return {
+            overlap: Math.min(max2-min1, max1-min2),
+            normal: axis.clone(),
+        };
+    }
+
+    correctNormalDirection(normal, o1, o2) {
+        const vecO1O2 = o2.shape.position.clone().subtract(o1.shape.position);
+        const dot = normal.dot(vecO1O2);
+        if (dot >= 0) {
+            return normal;
+        } else {
+            return normal.invert();
+        }
+    }
+
+    findClosestPointSegment(p, a, b) {
+        const vAB = b.clone().subtract(a);  //vector from point a to point b
+        const vAP = p.clone().subtract(a);
+
+        const proj = vAB.dot(vAP);
+        const d = proj / vAB.magnitude() / vAB.magnitude();
+
+        let closest;    //closest point
+
+        if (d <= 0) {
+            closest = a;
+        } else if (d >= 1) {
+            closest = b;
+        } else {
+            closest = a.clone().add(vAB.clone().multiply(d));
+        }
+        
+        const dist = p.distanceTo(closest);
+        return [closest, dist];  //explain next class
+    }
+
+    findContactPointCirclePolygon(circleCenter, polygonVertices) {
+        let contact, v1, v2;
+        let shortestDist = Number.MAX_VALUE;
+        for (let i=0; i<polygonVertices.length; i++) {
+            v1 = polygonVertices[i];
+            v2 = polygonVertices[(i+1)%polygonVertices.length];
+            const info = this.findClosestPointSegment(circleCenter, v1, v2);    //closest and distSq
+            if(info[1] < shortestDist) {
+                contact = info[0];
+                shortestDist = info[1];
+            }
+        }
+        // renderer.renderedNextFrame.push(contact);
+        return contact;
+    }
+
+    findContactPointPolygons (vertices1, vertices2) {
+        let contact1, contact2, p, v1, v2, minDist;
+        contact2 = null;
+        minDist = Number.MAX_VALUE;
+        for (let i=0; i<vertices1.length; i++) {
+            p = vertices1[i];
+            for (let j=0; j<vertices2.length; j++) {
+                v1 = vertices2[j];
+                v2 = vertices2[(j+1) % vertices2.length];
+                const info = this.findClosestPointSegment(p, v1, v2);
+                if (checkNearlyEqual(info[1], minDist) && !checkNearlyEqualVectors(info[0], contact1)) {
+                    contact2 = info[0];
+                } else if (info[1] < minDist) {
+                    contact1 = info[0];
+                    minDist = info[1];
+                }
+            }
+        }
+
+        for (let i=0; i<vertices2.length; i++) {
+            p = vertices2[i];
+            for (let j=0; j<vertices1.length; j++) {
+                v1 = vertices1[j];
+                v2 = vertices1[(j+1) % vertices1.length];
+                const info = this.findClosestPointSegment(p, v1, v2);
+                if (checkNearlyEqual(info[1], minDist) && !checkNearlyEqualVectors(info[0], contact1)) {
+                    contact2 = info[0];
+                } else if (info[1] < minDist) {
+                    contact1 = info[0];
+                    minDist = info[1];
+                }
+            }
+        }
+
+        if (contact2) {
+            return averageVector([contact1, contact2]);
+        } else {
+            return contact1;
+        }
+    }
+
+
+    //Collision resolution methods
+    //
+    //
 
     pushOffObjects(o1, o2, overlap, normal) {
         o1.shape.position.subtract(normal.clone().multiply(overlap/2));

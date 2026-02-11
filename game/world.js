@@ -20,8 +20,8 @@ export class GameWorld {
         return body;
     }
 
-    // Ball spawning logic only for test-engine page
-    spawnBall(canvas, image=null, color=null, velocity=new Vector2(0, BALL_SPEED)) {
+    // Ball spawning logic for random positions and colors
+    spawnObject(canvas, image=null, color=null, velocity=new Vector2(0, BALL_SPEED)) {
         const x = Math.random() * (canvas.width - BALL_RADIUS * 2) + BALL_RADIUS;
         const y = Math.random() * (canvas.height / 3);
         const position = new Vector2(x, y);

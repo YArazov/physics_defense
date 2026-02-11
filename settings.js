@@ -16,6 +16,8 @@ export const BALL_RADIUS = 20;
 export const BALL_SPEED = 5;    
 export const MAX_BALLS = 100;  
 
+export const RECTANGLE_SIZE = 40; // Base size for rectangles
+
 export const FRAME_RATE = 60; // Target frame rate
 export const TIME_STEP = 1 / FRAME_RATE; // Fixed time step for physics updates
 

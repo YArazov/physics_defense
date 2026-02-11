@@ -1,7 +1,8 @@
 import Vector2 from './vector2.js';
 import { canvas, world } from '../main.js';
-import { BALL_COLORS, BALL_RADIUS, BALL_SPEED, MAX_BALLS, TIME_STEP } from '../settings.js';
+import { BALL_COLORS, BALL_RADIUS, RECTANGLE_SIZE, BALL_SPEED, MAX_BALLS, TIME_STEP } from '../settings.js';
 import { Circle } from './shapes/circle.js';
+import { Rectangle } from './shapes/rectangle.js';
 
 export const inputState = {
     mouse: {
@@ -44,7 +45,14 @@ export function initInputListeners() {
 
         if (e.button === 0) {
             const color = BALL_COLORS[Math.floor(Math.random() * BALL_COLORS.length)];
-            world.createRigidBody(new Circle(new Vector2(inputState.mouse.position.x, inputState.mouse.position.y), BALL_RADIUS*(0.3+2*Math.random())), null, color, new Vector2(0, 0));
+            const circle = Math.random() < 0.5 ? true : false; 
+            if (circle) {
+                world.createRigidBody(new Circle(new Vector2(inputState.mouse.position.x, inputState.mouse.position.y), BALL_RADIUS*(0.3+2*Math.random())), null, color, new Vector2(0, 0));
+            } else {
+                const w = RECTANGLE_SIZE*(0.3+2*Math.random());
+                const h = RECTANGLE_SIZE*(0.3+2*Math.random());
+                world.createRigidBody(new Rectangle(new Vector2(inputState.mouse.position.x, inputState.mouse.position.y), w, h), null, color, new Vector2(0, 0));
+            }
         }
     });
 

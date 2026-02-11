@@ -2,6 +2,8 @@
 // its shape can be a circle or rectangle
 
 import Vector2 from './vector2.js';
+import { Rectangle } from './shapes/rectangle.js';
+import { Circle } from './shapes/circle.js';
 
 export class RigidBody {
     constructor(shape, image, color=null, velocity = new Vector2(0, 0), acceleration = new Vector2(0, 0)) {
@@ -35,6 +37,9 @@ export class RigidBody {
     update(dt) {
         this.velocity = this.velocity.add(this.acceleration.clone().multiply(dt));
         this.shape.position = this.shape.position.add(this.velocity.clone().multiply(dt));
+        if(this.shape instanceof Rectangle) {
+            this.shape.updateVertices();
+        }
     }
 
     draw(ctx) {
