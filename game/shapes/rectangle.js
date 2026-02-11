@@ -26,11 +26,6 @@ export class Rectangle {
         this.vertices[3].setX(-this.width/2).setY(this.height/2).rotate(this.orientation).add(this.position);
     } 
 
-    update(dt) {
-        this.velocity = this.velocity.add(this.acceleration.clone().multiply(dt));
-        this.position = this.position.add(this.velocity.clone().multiply(dt));
-    }
-
     draw(ctx, color) {
         const x = this.position.x;
         const y = this.position.y;
