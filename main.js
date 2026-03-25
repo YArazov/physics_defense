@@ -134,24 +134,9 @@ if (!isTesting) {
 
 
 function findAndBindObjectToMouse() {
-    const { ball, distance, inside } = world.getClosestBallInfo(inputState.mouse.position);
-    if (ball) {
-        ctx.font = '20px Arial';
-        ctx.fillStyle = inside ? 'green' : 'red';
-        ctx.fillText(
-            `Closest ball: (${ball.shape.position.x.toFixed(1)}, ${ball.shape.position.y.toFixed(1)}), ` +
-            `distance: ${distance.toFixed(1)}, inside: ${inside}`,
-            canvas.width / 2,
-            90
-        );
-        // Move the ball to the inputState.mouse position if inside
-        if (inside) {
-            inputState.mouse.movedObject = ball;
-        }
-    } else {
-        ctx.font = '20px Arial';
-        ctx.fillStyle = 'gray';
-        ctx.fillText('No balls to check.', canvas.width / 2, 90);
+    const obj = world.checkObjectAtPosition(inputState.mouse.position);
+    if (obj) {
+        inputState.mouse.movedObject = obj;
     }
 }
 

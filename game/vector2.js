@@ -43,6 +43,10 @@ class Vector2 {
         return Math.sqrt(this.x * this.x + this.y * this.y);
     }
 
+	lengthSq() {
+    	return this.x * this.x + this.y * this.y;
+	}
+
     normalize() {
         const length = this.magnitude();
 		if(length > 0) {

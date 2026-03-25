@@ -11,7 +11,6 @@ export class CollisionResolver {
     }
 
     clearCollisions() {
-        console.log(this.collisions.length);
         this.collisions = [];
     }
 

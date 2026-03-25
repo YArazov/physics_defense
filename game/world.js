@@ -3,8 +3,9 @@
 import { RigidBody } from './rigidBody.js';
 import Vector2 from './vector2.js';
 import { Circle } from './shapes/circle.js';
-import { BALL_COLORS, BALL_RADIUS, BALL_SPEED, GRAVITY } from '../settings.js';
-import { distance } from '../helperFunctions.js';
+import { Rectangle } from './shapes/rectangle.js';
+import { BALL_RADIUS, BALL_SPEED } from '../settings.js';
+import { isPointInCircle, isPointInRotatedRect } from '../helperFunctions.js';
 import { CollisionResolver } from './collisions.js';
 
 export class GameWorld {
@@ -48,18 +49,21 @@ export class GameWorld {
             }
         }
     }
-    // Finds the closest ball to the given position and checks if the position is inside it
-    getClosestBallInfo(position) {
-        let closestBall = null;
-        let minDist = Infinity;
-        for (const ball of this.entities) {
-            const dist = distance(position, ball.shape.position);
-            if (dist < minDist) {
-                minDist = dist;
-                closestBall = ball;
+
+    checkObjectAtPosition(position) {
+        let inside = false;
+        for (const obj of this.entities) { 
+            if (obj.shape instanceof Circle) {
+                inside = isPointInCircle(obj.shape, position);     
+            } else if (obj.shape instanceof Rectangle) {
+                inside = isPointInRotatedRect(obj.shape, position);
             }
+            if (inside) {
+                return obj;  // Return the first object found at the position
+            }  
         }
-        const inside = closestBall ? minDist <= closestBall.shape.radius : false;
-        return { ball: closestBall, distance: minDist, inside };
+            
+        // return { ball: closestBall, distance: minDist, inside };
     }
 }
+    
