@@ -5,6 +5,16 @@ class Vector2 {
         this.y = y;
     }
 
+    setX (x) {
+		this.x = x;
+		return this;
+	}
+
+	setY (y) {
+		this.y = y;
+		return this;
+	}
+
     add(v) {
         this.x += v.x;
         this.y += v.y;
@@ -33,6 +43,10 @@ class Vector2 {
         return Math.sqrt(this.x * this.x + this.y * this.y);
     }
 
+	lengthSq() {
+    	return this.x * this.x + this.y * this.y;
+	}
+
     normalize() {
         const length = this.magnitude();
 		if(length > 0) {
@@ -41,6 +55,48 @@ class Vector2 {
 		}
 		return this;
     }
+
+    rotate(angle) {	//in formula angle is Theta
+		const x = this.x;	//Ax
+		const y = this.y;
+		this.x = x * Math.cos(angle) - y * Math.sin(angle);	//Bx
+		this.y = x * Math.sin(angle) + y * Math.cos(angle);
+		return this;
+	}
+
+    rotateCW90 () {
+		const x = this.x;
+		this.x = -this.y;
+		this.y = x;
+		return this;
+	}
+
+	rotateCCW90 () {
+		const x = this.x;
+		this.x = this.y;
+		this.y = -x;
+		return this;
+	}
+
+    invert () {
+		this.x = -this.x;
+		this.y = -this.y;
+		return this;
+	}
+
+	invertX () {
+		this.x = -this.x;
+		return this;
+	}
+
+	invertY () {
+		this.y = -this.y;
+		return this;
+	}
+
+    moveDistInDir (dist, dir) {	//dir is unit vector
+		return this.add(dir.clone().multiply(dist));
+	}
 
     clone() {
         return new Vector2(this.x, this.y);

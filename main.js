@@ -81,7 +81,7 @@ function animateTestEngine() {
         inputState.mouse.movedObject = null;  
     }
 
-    let g = GRAVITY.NORMAL;
+    let g = GRAVITY.ZERO; // default to no gravity
     
     switch (inputState.gravitySelected) {
         case '3':
@@ -102,7 +102,6 @@ function animateTestEngine() {
         entity.acceleration.y = g;
     }
 
-
     requestAnimationFrame(animateTestEngine);
 }
 
@@ -117,7 +116,7 @@ if (!isTesting) {
 // Example: spawn a new ball every 2 seconds (optional)
 if (!isTesting) {
     setInterval(() => {
-        world.spawnBall(canvas, null, 
+        world.spawnObject(canvas, null, 
             BALL_COLORS[Math.floor(Math.random() * BALL_COLORS.length)], 
             new Vector2(0, BALL_SPEED));
     }, 100);
@@ -135,24 +134,9 @@ if (!isTesting) {
 
 
 function findAndBindObjectToMouse() {
-    const { ball, distance, inside } = world.getClosestBallInfo(inputState.mouse.position);
-    if (ball) {
-        ctx.font = '20px Arial';
-        ctx.fillStyle = inside ? 'green' : 'red';
-        ctx.fillText(
-            `Closest ball: (${ball.shape.position.x.toFixed(1)}, ${ball.shape.position.y.toFixed(1)}), ` +
-            `distance: ${distance.toFixed(1)}, inside: ${inside}`,
-            canvas.width / 2,
-            90
-        );
-        // Move the ball to the inputState.mouse position if inside
-        if (inside) {
-            inputState.mouse.movedObject = ball;
-        }
-    } else {
-        ctx.font = '20px Arial';
-        ctx.fillStyle = 'gray';
-        ctx.fillText('No balls to check.', canvas.width / 2, 90);
+    const obj = world.checkObjectAtPosition(inputState.mouse.position);
+    if (obj) {
+        inputState.mouse.movedObject = obj;
     }
 }
 
