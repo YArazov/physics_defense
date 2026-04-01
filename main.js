@@ -81,7 +81,7 @@ function animateTestEngine() {
         inputState.mouse.movedObject = null;  
     }
 
-    let g = GRAVITY.NORMAL;
+    let g = GRAVITY.ZERO; // default to no gravity
     
     switch (inputState.gravitySelected) {
         case '3':

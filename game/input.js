@@ -1,6 +1,6 @@
 import Vector2 from './vector2.js';
 import { canvas, world } from '../main.js';
-import { BALL_COLORS, BALL_RADIUS, RECTANGLE_SIZE, BALL_SPEED, MAX_BALLS, TIME_STEP } from '../settings.js';
+import { BALL_COLORS, BALL_RADIUS, RECTANGLE_SIZE, TIME_STEP, DEFAULT_GRAVITY } from '../settings.js';
 import { Circle } from './shapes/circle.js';
 import { Rectangle } from './shapes/rectangle.js';
 
@@ -13,7 +13,7 @@ export const inputState = {
         rightDown: false,
         movedObject: null,
     },
-    gravitySelected: '2', // default gravity level
+    gravitySelected: DEFAULT_GRAVITY, 
     
 };
 

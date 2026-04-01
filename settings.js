@@ -29,3 +29,5 @@ export const GRAVITY = {
     ZERO: 0
 };
 
+export const DEFAULT_GRAVITY = "0"; // Default gravity level (can be '0', '1', '2', or '3')
+

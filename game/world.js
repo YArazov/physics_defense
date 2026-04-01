@@ -63,7 +63,6 @@ export class GameWorld {
             }  
         }
             
-        // return { ball: closestBall, distance: minDist, inside };
     }
 }
     
