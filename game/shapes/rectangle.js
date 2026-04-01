@@ -34,7 +34,7 @@ export class Rectangle {
         const angle = this.orientation; // 22.5 degrees in radians
         ctx.save();
         ctx.translate(x, y);
-        ctx.rotate(-angle);   // Rotate by -22.5 degrees
+        ctx.rotate(angle);   // Rotate by -22.5 degrees
         ctx.fillStyle = color;
         ctx.fillRect(-w / 2, -h / 2, w, h);
         ctx.restore();
