@@ -34,8 +34,10 @@ class Vector2 {
     }
 
     divide(scalar) {
-        this.x /= scalar;
-		this.y /= scalar;
+		if(scalar !== 0) {
+			this.x /= scalar;
+			this.y /= scalar;
+		}
 		return this;
     }
 

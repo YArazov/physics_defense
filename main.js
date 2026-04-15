@@ -101,7 +101,7 @@ function animateTestEngine() {
     for (const entity of world.entities) {
         entity.acceleration.y = g;
     }
-
+    
     requestAnimationFrame(animateTestEngine);
 }
 

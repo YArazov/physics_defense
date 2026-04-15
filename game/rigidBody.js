@@ -22,15 +22,15 @@ export class RigidBody {
 		this.density = 5;
 		this.inertia;
 		this.inverseInertia;
-		this.isFixed = false;
+		this.static = false;
     }
 
     setMass() {
 		this.mass = this.shape.calculateMass(this.density);
 		this.inertia = this.shape.calculateInertia(this.mass);
 
-		if (this.isFixed) {
-			this.inverseMass = 0;
+		if (this.static) {
+			this.inverseMass = 0;   //defined as 1/mass, so static objects have infinite mass and thus zero inverse mass
 			this.inverseInertia = 0;
 		} else {
 			this.inverseMass = 1 / this.mass;

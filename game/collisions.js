@@ -428,7 +428,9 @@ export class CollisionResolver {
         + r2PerpDotN * r2PerpDotN * o2.inverseInertia;
 
         let j = -(1+this.e) * contactVelocityNormal;
-        j /= denom;
+        if(j != 0) {
+            j /= denom;
+        }
 
         const impulse = normal.clone().multiply(j);
 
@@ -465,7 +467,9 @@ export class CollisionResolver {
         + r2PerpDotT * r2PerpDotT * o2.inverseInertia;
 
         let jt = -relativeVelocity.dot(tangent);
-        jt /= denom;
+        if(jt != 0) {
+            jt /= denom;
+        }
 
         //Coloumb's law
         let frictionImpulse;
@@ -479,6 +483,7 @@ export class CollisionResolver {
         o1.angularVelocity -= r1.cross(frictionImpulse) * o1.inverseInertia;
         o2.velocity.add(frictionImpulse.clone().multiply(o2.inverseMass));
         o2.angularVelocity += r2.cross(frictionImpulse) * o2.inverseInertia;
+        
     }
 
     detectAndResolve(objects) {
