@@ -21,11 +21,31 @@ class Vector2 {
         return this;
     }
 
+	addX (x) {	//scalar addition
+		this.x += x;
+		return this;
+	}
+	
+	addY (y) {	//scalar addition
+		this.y += y;
+		return this;
+	}
+
     subtract(v) {
         this.x -= v.x;
         this.y -= v.y;
         return this;
     }
+
+	subtractX (x) {
+		this.x -= x;
+		return this;
+	}
+
+	subtractY (y) {
+		this.y -= y;
+		return this;
+	}
 
     multiply(scalar) {
         this.x *= scalar;
@@ -45,7 +65,7 @@ class Vector2 {
         return Math.sqrt(this.x * this.x + this.y * this.y);
     }
 
-	lengthSq() {
+	magnitudeSq() {
     	return this.x * this.x + this.y * this.y;
 	}
 
@@ -106,6 +126,12 @@ class Vector2 {
 
     distanceTo (v) {
 		return this.clone().subtract(v).magnitude();
+	}
+
+	distanceToSq (v) {
+		const dx = this.x - v.x;
+		const dy = this.y - v.y;
+		return dx * dx + dy * dy;
 	}
 
     dot (v) {

@@ -17,8 +17,9 @@ export class GameWorld {
     createRigidBody(shape, image, color=null, velocity = new Vector2(0, 0), acceleration = new Vector2(0, 0)) {
         const body = new RigidBody(shape, image, color, velocity, acceleration);
         const rand = Math.random();
-        if (rand < 0.2) {
-            body.static = true;  // 20% chance to be static
+        if (rand < 0.5) {
+            body.static = true;  // 50% chance to be static
+            body.color = 'gray';  // Static objects are gray
         }
         body.setMass();
         this.entities.push(body);
