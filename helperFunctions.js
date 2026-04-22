@@ -28,6 +28,13 @@ export function checkNearlyEqualVectors(v1, v2) {
     return v1.distanceTo(v2) < verySmallAmount;
 }
 
+export function checkVectorsSameDirection (v1, v2) {
+    if (v1.dot(v2) > 0) {
+        return true;
+    }
+    return false;
+}
+
 export function averageVector(vectors) {
         const n = vectors.length;
         const average = new Vector2(0, 0);
@@ -58,5 +65,5 @@ export function isPointInCircle(circle, point) {
     const toPoint = circle.position.clone().subtract(point);
     
     // Check if distance squared is less than radius squared
-    return toPoint.lengthSq() <= circle.radius * circle.radius;
+    return toPoint.magnitudeSq() <= circle.radius * circle.radius;
 }

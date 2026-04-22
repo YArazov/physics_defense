@@ -8,6 +8,11 @@ import { Circle } from './shapes/circle.js';
 export class RigidBody {
     constructor(shape, image, color=null, velocity = new Vector2(0, 0), acceleration = new Vector2(0, 0)) {
         this.shape = shape;
+        if (this.shape instanceof Rectangle) {
+			this.shape.updateVertices();
+		}
+        this.aabb = new Aabb (new Vector2(0, 0), new Vector2(0, 0));
+        
         this.velocity = velocity;
         this.acceleration = acceleration;
 
@@ -47,10 +52,13 @@ export class RigidBody {
         this.angularVelocity += this.angularAcceleration * dt;
 		this.shape.orientation += this.angularVelocity * dt;
         
-        //update vertices if the shape is a rectangle
-        if(this.shape instanceof Rectangle) {
-            this.shape.updateVertices();
-        }
+        //update vertices and aabb   
+        if (this.shape instanceof Rectangle) {
+			this.shape.updateVertices();
+            this.aabb.updateMinMaxRect(this.shape.vertices);
+		} else if (this.shape instanceof Circle) {
+            this.aabb.updateMinMaxCircle(this.shape.position, this.shape.radius);
+		}
     }
 
     draw(ctx) {
@@ -60,5 +68,45 @@ export class RigidBody {
         } else {
             this.shape.draw(ctx, this.color);
         }
+    }
+}
+
+class Aabb {
+    constructor (min, max) {
+        this.min = min;
+        this.max = max;
+    }
+
+    updateMinMaxVelocity (dv) { //add vector dv to min max positions
+        this.min.add(dv);
+        this.max.add(dv);
+    }
+
+    updateMinMaxCircle (p, r) {
+        this.min = p.clone().subtractX(r).subtractY(r);
+        this.max = p.clone().addX(r).addY(r);
+    }
+
+    updateMinMaxRect (vertices) {
+        let minX = Number.MAX_VALUE;
+        let minY = Number.MAX_VALUE;
+        let maxX = Number.MIN_VALUE;
+        let maxY = Number.MIN_VALUE;
+        let vertexX;
+        let vertexY;
+
+        for (let i=0; i<vertices.length; i++) {
+            vertexX = vertices[i].x;
+            vertexY = vertices[i].y;
+            minX = vertexX < minX ? vertexX : minX;
+            maxX = vertexX > maxX ? vertexX : maxX;
+            minY = vertexY < minY ? vertexY : minY;
+            maxY = vertexY > maxY ? vertexY : maxY;
+        }
+
+        this.min.x = minX;
+        this.min.y = minY;
+        this.max.x = maxX;
+        this.max.y = maxY;
     }
 }
